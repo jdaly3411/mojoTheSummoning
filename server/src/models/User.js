@@ -1,6 +1,6 @@
 // create your User model here
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db/");
+const sequelize = require("../db/config");
 
 const User = sequelize.define("User", {
   id: {
@@ -30,5 +30,24 @@ const Card = sequelize.define("Card", {
   stamina: DataTypes.INTEGER,
   imgUrl: DataTypes.STRING,
 });
+const Attack = sequelize.define("Attack", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  title: DataTypes.STRING,
+  mojoCost: DataTypes.INTEGER,
+  staminaCost: DataTypes.INTEGER,
+});
 
-module.exports = { User, Deck };
+User.hasOne(Deck);
+Deck.belongsTo(User);
+
+Deck.hasMany(Card);
+Card.belongsTo(Deck);
+
+Card.belongsToMany(Attack, { through: "CardAttacks" });
+Attack.belongsToMany(Card, { through: "CardAttacks" });
+
+module.exports = { User, Deck, Card, Attack };
