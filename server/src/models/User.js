@@ -32,22 +32,51 @@ const Card = sequelize.define("Card", {
 });
 const Attack = sequelize.define("Attack", {
   id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+    type: DataTypes.INTEGER, // Define the type of the id
+    primaryKey: true, // Define the primary key
+    autoIncrement: true, // Define the primary key and auto-increment
   },
-  title: DataTypes.STRING,
-  mojoCost: DataTypes.INTEGER,
-  staminaCost: DataTypes.INTEGER,
+  title: DataTypes.STRING, // Define the title of the attack
+  mojoCost: DataTypes.INTEGER, // Define the mojo cost for the attack
+  staminaCost: DataTypes.INTEGER, // Define the stamina cost for the attack
 });
 
-User.hasOne(Deck);
-Deck.belongsTo(User);
+User.hasOne(Deck, {
+  foreignKey: {
+    name: "userId", // Define the foreign key
+    allowNull: false, // Ensure that the User must have a Deck
+  },
+  onDelete: "CASCADE", // Ensure that if a User is deleted, the associated Deck is also deleted
+});
+Deck.belongsTo(User, {
+  foreignKey: {
+    name: "userId", // Define the foreign key
+    allowNull: false, // Ensure that the Deck must belong to a User
+  },
+});
 
-Deck.hasMany(Card);
-Card.belongsTo(Deck);
+Deck.hasMany(Card, {
+  foreignKey: {
+    name: "deckId", // Define the foreign key
+    allowNull: false, // Ensure that the Deck must have Cards
+  },
+  onDelete: "CASCADE",
+});
+Card.belongsTo(Deck, {
+  foreignKey: {
+    name: "deckId", // Define the foreign key
+    allowNull: false, // Ensure that the Card must belong to a Deck
+  },
+});
 
-Card.belongsToMany(Attack, { through: "CardAttacks" });
-Attack.belongsToMany(Card, { through: "CardAttacks" });
+Card.belongsToMany(Attack, {
+  through: "CardAttacks",
+  onDelete: "CASCADE",
+});
+Attack.belongsToMany(Card, {
+  through: "CardAttacks", // Define the through association
+  onDelete: "CASCADE", // Ensure that if a Card is deleted, the associated CardAttacks are also deleted
+});
 
 module.exports = { User, Deck, Card, Attack };
+// export the models
