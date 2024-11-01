@@ -1,26 +1,25 @@
-const { describe, it, expect, beforeAll, afterAll } = require("@jest/globals");
-const { User } = require(".");
-const db = require("../db/config");
+const { User, Deck } = require("../index");
+const sequelize = require("../../db/config");
 
-// define in global scope
-let user;
-
-// clear db and create new user before tests
-beforeAll(async () => {
-  await db.sync({ force: true });
-  user = await User.create({ username: "gandalf" });
-});
-
-// clear db after tests
-afterAll(async () => await db.close());
-
-describe("User", () => {
-  it("has an id", async () => {
-    expect(user).toHaveProperty("id");
+describe("User Model", () => {
+  beforeAll(async () => {
+    await sequelize.sync({ force: true });
   });
 
-  /**
-   * Create more tests
-   * E.g. check that the username of the created user is actually gandalf
-   */
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
+  test("should create a User", async () => {
+    const user = await User.create({ username: "testUser" });
+    expect(user.username).toBe("testUser");
+  });
+
+  test("should associate a User with a Deck", async () => {
+    const user = await User.create({ username: "testUser2" });
+    const deck = await Deck.create({ name: "testDeck", xp: 0 });
+    await user.setDeck(deck);
+    const userDeck = await user.getDeck();
+    expect(userDeck.name).toBe("testDeck");
+  });
 });
