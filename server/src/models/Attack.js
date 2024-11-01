@@ -1,17 +1,24 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/config");
 
-const User = sequelize.define("User", {
+const Attack = sequelize.define("Attack", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  username: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+  },
+  mojoCost: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  staminaCost: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
 });
 
-module.exports = User;
+module.exports = Attack;
